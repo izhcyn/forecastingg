@@ -14,6 +14,8 @@ st.set_page_config(layout="wide")
 @st.cache_data
 def load_data():
     df = pd.read_excel("cleans.xlsx")
+    # PASTIKAN KODE PRODUK DIBACA SEBAGAI TEKS (STRING) UNTUK MENGHILANGKAN KOMA
+    df['KodeProduk'] = df['KodeProduk'].astype(np.int64).astype(str)
     df['WeekStart'] = pd.to_datetime(df['WeekStart'])
     return df
 
@@ -155,7 +157,7 @@ elif st.session_state.page == "Strategi":
             nama_produk = df_p['NamaProduk'].iloc[0] if 'NamaProduk' in df_p.columns else "Nama Tidak Diketahui"
             result.append((kode, nama_produk, y))
 
-    # Ambil 5 terbesar
+    # Ambil 10 terbesar
     result = sorted(result, key=lambda x: x[2], reverse=True)[:10]
 
     for i, (kode, nama, val) in enumerate(result):
@@ -171,4 +173,3 @@ elif st.session_state.page == "Strategi":
             """, 
             unsafe_allow_html=True
         )
-
