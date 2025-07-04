@@ -52,14 +52,24 @@ for menu in ["Homepage", "Korelasi", "Prediksi", "Forecasting", "Strategi"]:
 
 # === HOMEPAGE ===
 if st.session_state.page == "Homepage":
-    st.title("Homepage")
-    st.subheader("Data Preview")
-    st.write(df.head())
-    st.subheader("Penjelasan")
+    st.title("DASHBOARD PREDIKSI PENJUALAN TOKO 'ANTIANSHOP' ")
+    st.write("Selamat datang di Dashboard Prediksi Penjualan Toko 'Antianshop' "
+            "Dalam ekosistem Marketplace, prediksi penjualan menjadi faktor penting bagi para penjual dalam menentukan strategi bisnis yang optimal. "
+            "Namun, banyak penjual masih menghadapi kesulitan dalam memperkirakan permintaan pasar secara akurat, "
+            "sehingga dapat mengakibatkan stok barang yang tidak seimbang serta keputusan pemasaran yang kurang efektif "
+            "dengan model prediksi toko 'Antianshop' ini diharapkan dapat membantu pelaku bisnis dalam mengoptimalkan strategi penjualan, "
+            "mengetahui faktor yang mempengaruhi penjualan serta mengelola stok produk berdasarkan prediksi penjualannya. ")
+
+    st.info("Data diperoleh dari Shopee Seller Centre")    
+    st.subheader("Dataset")
+    st.write("Data penjualan perminggu dari toko “antianshop” di Shopee selama 2 tahun mulai dari tanggal 22 Mei 2023 sampai 25 Mei 2025  "
+            "dengan jumlah baris 5425 dan jumlah kolom 29.")
+    st.write(df)
+    st.subheader("Penjelasan Aplikasi")
     st.write("""
     Aplikasi ini menggunakan data historis penjualan untuk memprediksi dan memforecast unit terjual produk.
     - Korelasi: Menampilkan fitur paling berpengaruh terhadap UnitTerjual.
-    - Prediksi: Model LSTM per produk untuk prediksi mingguan.
+    - Prediksi: Model Bidirectional LSTM per-produk untuk prediksi mingguan.
     - Forecasting: Perkiraan penjualan beberapa minggu ke depan.
     - Strategi: Rekomendasi produk yang perlu diprioritaskan stoknya.
     """)
@@ -67,6 +77,8 @@ if st.session_state.page == "Homepage":
 # === KORELASI ===
 elif st.session_state.page == "Korelasi":
     st.title("Korelasi antar Fitur")
+    st.write("Korelasi ini bertujuan untuk mengetahui seberapa besar hubungan atau pengaruh "
+             "masing-masing fitur terhadap nilai **Unit Terjual**")
     corr_matrix = df.corr(numeric_only=True)
     unit_terjual_corr = corr_matrix['UnitTerjual'].abs().sort_values(ascending=False)
     st.write(corr_matrix)
