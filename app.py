@@ -6,6 +6,7 @@ from tensorflow.keras.models import load_model
 import matplotlib.pyplot as plt
 from datetime import timedelta
 import os
+from sklearn.metrics import mean_absolute_error, mean_squared_error
 
 # Setup
 st.set_page_config(layout="wide")
@@ -101,17 +102,34 @@ elif st.session_state.page == "Prediksi":
             y_true = df_product['UnitTerjual'].values[10:]
             y_pred = target_scaler.inverse_transform(model.predict(X_seq))
 
+            # --- PENAMBAHAN KODE EVALUASI ---
+            mae = mean_absolute_error(y_true, y_pred)
+            rmse = np.sqrt(mean_squared_error(y_true, y_pred))
+
+            st.subheader("Evaluasi Kinerja Model")
+            col1, col2 = st.columns(2)
+            col1.metric(label="📈 Mean Absolute Error (MAE)", value=f"{mae:.2f}")
+            col2.metric(label="🎯 Root Mean Squared Error (RMSE)", value=f"{rmse:.2f}")
+            
+            st.info("""
+            **MAE:** Rata-rata selisih absolut antara prediksi dan nilai aktual. Semakin mendekati 0, semakin baik.
+            **RMSE:** Mirip dengan MAE tetapi memberikan bobot lebih pada kesalahan yang besar. Semakin mendekati 0, semakin baik.
+            """)
+            # --- AKHIR PENAMBAHAN ---
+            
+            st.subheader("Grafik Perbandingan Prediksi vs Aktual")
             fig, ax = plt.subplots(figsize=(10, 5))
-            ax.plot(y_true, label='Aktual')
-            ax.plot(y_pred, label='Prediksi')
-            ax.set_title(f'Produk {selected_code}')
+            ax.plot(y_true, label='Aktual', marker='o')
+            ax.plot(y_pred, label='Prediksi', linestyle='--')
+            ax.set_title(f'Kinerja Model untuk Produk: {selected_code}')
+            ax.set_xlabel("Minggu")
+            ax.set_ylabel("Unit Terjual")
             ax.legend()
             st.pyplot(fig)
         else:
-            st.error("Model tidak ditemukan.")
+            st.error(f"Model untuk produk dengan kode {selected_code} tidak ditemukan.")
     else:
-        st.warning("Data belum cukup panjang.")
-
+        st.warning("Data historis produk ini tidak cukup untuk melakukan prediksi (kurang dari 11 minggu).")
 # === FORECASTING ===
 elif st.session_state.page == "Forecasting":
     st.title("Forecasting Mingguan ke Depan")
